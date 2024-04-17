@@ -48,4 +48,4 @@ frontend jeckmps-frontend-https
 backend jeckmps-backend
         balance roundrobin
         server 505813-web-01 34.232.77.236:80 check
-        server 505813-web-02 100.25.20.174:80 check
+        server 505813-web-02 35.153.192.135:80 check
