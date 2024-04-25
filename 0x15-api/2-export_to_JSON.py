@@ -1,44 +1,31 @@
 #!/usr/bin/python3
 """
-Exports to-do list information for a given employee ID to JSON format.
-
-This script takes an employee ID as a command-line argument and exports
-the corresponding user information and to-do list to a JSON file.
+script to fetch api information
 """
-
-import json
 import requests
 import sys
 
+api = "https://jsonplaceholder.typicode.com"
+"""api url"""
+
 
 if __name__ == "__main__":
-    # Get the employee ID from the command-line argument
-    user_id = sys.argv[1]
-
-    # Base URL for the JSONPlaceholder API
-    url = "https://jsonplaceholder.typicode.com/"
-
-    # Fetch user information using the provided employee ID
-    user = requests.get(url + "users/{}".format(user_id)).json()
-    username = user.get("username")
-
-    # Fetch the to-do list for the employee using the provided employee ID
-    params = {"userId": user_id}
-    todos = requests.get(url + "todos", params).json()
-
-    # Create a dictionary containing the user and to-do list information
-    data_to_export = {
-        user_id: [
-            {
-                "task": t.get("title"),
-                "completed": t.get("completed"),
-                "username": username
-            }
-            for t in todos
-        ]
-    }
-
-    # Write the data to a JSON file with the employee ID as the filename
-    with open("{}.json".format(user_id), "w") as jsonfile:
-        json.dump(data_to_export, jsonfile, indent=4)
-
+    all_list = []
+    if len(sys.argv) > 1:
+        id = int(sys.argv[1])
+        req = requests.get("{}/todos/".format(api))
+        user = requests.get("{}/users/{}".format(api, id)).json()
+        todos = list(filter(lambda x: x.get('userId') == id, req.json()))
+        file_name = "{}.json".format(id)
+        new = '"task":"{}","completed":"{}","username":"{}",'
+        with open(file_name, "w") as file:
+            file.write("\"{}\":[".format(id))
+            for i in todos:
+                file.write(
+                        new.format(
+                            i.get("title"),
+                            i.get("completed"),
+                            user.get("username")
+                            )
+                        )
+            file.write("]")
