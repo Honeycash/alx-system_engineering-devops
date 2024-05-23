@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-pgrep -f gunicorn | xargs -I {} kill -HUP {}
+# Gracefully reloads Gunicorn.
 
-
+ps aux | grep gunicorn | awk '{ print $2 }' | xargs kill -HUP
